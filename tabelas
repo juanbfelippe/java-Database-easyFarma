@@ -1,0 +1,19 @@
+CREATE TABLE clientes(
+    id serial PRIMARY KEY,
+    nome varchar(255),
+    email varchar(255),
+    telefone varchar(20)
+);
+
+CREATE TABLE promocoes (
+    id serial PRIMARY KEY,
+    tipo_remedio varchar(255),
+    porcentagem_desconto integer
+);
+
+
+CREATE TABLE estoque (
+    id serial PRIMARY KEY,
+    nome_remedio varchar(255),
+    quantidade integer
+);
