@@ -82,9 +82,8 @@ public class Main {
     }
 
     public static boolean cadastrarCliente(Scanner scanner) {
-
         try {
-
+            // Solicita informações do cliente ao usuário
             System.out.print("Nome do cliente: ");
             String nome = scanner.nextLine().trim();
             System.out.print("Email do cliente: ");
@@ -92,16 +91,20 @@ public class Main {
             System.out.print("Telefone do cliente: ");
             String telefone = scanner.nextLine();
 
+            // Conexão com o banco de dados
             DbContext database = new DbContext();
 
+            // Query SQL para inserir cliente
             String query = "INSERT INTO clientes (nome, email, telefone) VALUES (?, ?, ?)";
             PreparedStatement stmt = database.prepareStatement(query);
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, telefone);
 
+            // Executa a query
             int rowsAffected = stmt.executeUpdate();
 
+            // Verifica se o cliente foi cadastrado com sucesso
             if (rowsAffected > 0) {
                 System.out.println("---------------------------------");
                 System.out.println("Cliente cadastrado com sucesso.");
@@ -118,12 +121,16 @@ public class Main {
     }
     
     public static void listarClientes() {
+       
         DbContext dbContext = new DbContext();
+       
         try {
+            // Query SQL para selecionar todos os clientes
             String query = "SELECT id, nome, email, telefone FROM clientes";
             PreparedStatement stmt = dbContext.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
 
+            // Exibe os clientes
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String nome = resultSet.getString("nome");
@@ -144,7 +151,9 @@ public class Main {
 
     public static boolean atualizarCliente(Scanner scanner) {
         DbContext dbContext = new DbContext();
-
+        
+        // Lista os clientes antes de solicitar informações de atualização
+        listarClientes();
         System.out.print("Qual o ID do cliente: ");
         int id = scanner.nextInt();
         scanner.nextLine();
@@ -156,6 +165,7 @@ public class Main {
         String telefone = scanner.nextLine();
 
         try {
+            // Query SQL para atualizar o cliente no banco de dados
             String query = "UPDATE clientes SET nome = ?, email = ?, telefone = ? WHERE id = ?";
             PreparedStatement stmt = dbContext.prepareStatement(query);
             stmt.setString(1, nome);
@@ -163,28 +173,39 @@ public class Main {
             stmt.setString(3, telefone);
             stmt.setInt(4, id);
 
+            // Executa a atualização e verifica se foi bem-sucedida
             int rowsAffected = stmt.executeUpdate();
 
-            return rowsAffected > 0;
+             if (rowsAffected > 0) {
+                System.out.println("---------------------------------");
+                System.out.println("Cliente atualizado com sucesso.");
+                return true;
+            } else {
+                System.out.println("---------------------------------");
+                System.out.println("Falha ao atualizar o cliente.");
+                return false;
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-
     public static void excluirCliente(Scanner scanner) {
         try {
-            
+            // Lista os clientes antes de solicitar a exclusão
+            listarClientes();
             System.out.print("Informe o ID do cliente que deseja excluir: ");
             int id = scanner.nextInt();
             
             DbContext database = new DbContext();
             
+            // Query SQL para excluir o cliente
             String query = "DELETE FROM clientes WHERE id = ?";
             PreparedStatement stmt = database.prepareStatement(query);
             stmt.setInt(1, id);
 
+            // Executa a exclusão e verifica se foi bem-sucedida
             int rowsAffected = stmt.executeUpdate();
     
             if (rowsAffected > 0) {
@@ -198,6 +219,8 @@ public class Main {
             e.printStackTrace();  
         }
     }
+
+    /// As abas de Estoque e Gestão seguem a mesma lógica dos clientes. ////
 
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   Area    /////////////////////////////////////////
     // ///////////////////////////////////////  Estoque  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
